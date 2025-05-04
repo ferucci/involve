@@ -58,7 +58,7 @@ function setupAnimations() {
     opacity: 0.1,
     ease: "power2.out",
     transformOrigin: "center center",
-    onStart: () => video.style.zIndex = 99
+    onStart: () => video.style.zIndex = -1
   });
 
   // Анимация карточек
