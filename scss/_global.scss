@@ -1,0 +1,17 @@
+@use 'vars' as *;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: $bg-color;
+  color: $text-color;
+  overflow-x: hidden;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}

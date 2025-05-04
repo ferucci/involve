@@ -1,0 +1,36 @@
+@mixin fs ($ss: 3rem, $bs: 6rem) {
+  font-family: "neue-haas-grotesk-text", Sans-serif;
+  font-size: clamp($ss, 5vw, $bs);
+  font-weight: 400;
+  line-height: 1.1;
+  text-wrap: balance;
+  hyphens: auto; // перенос как в тетрадке
+  word-break: break-word;
+}
+
+
+$small: 576px;
+$large: 1200px;
+
+@mixin respond-to($media) {
+
+  // карманные компьютеры
+  @if $media ==handhelds {
+    @media only screen and (max-width: $small) {
+      @content;
+    }
+  }
+
+  @else if $media ==medium-screens {
+    @media only screen and (min-width: ($small + 1)) and (max-width: ($large - 1)) {
+      @content;
+    }
+  }
+
+  // широкий экран
+  @else if $media ==wide-screens {
+    @media only screen and (min-width: $large) {
+      @content;
+    }
+  }
+}

@@ -1,0 +1,194 @@
+@use 'reset';
+@use 'global';
+
+@use 'mixins' as mix;
+@use 'vars' as *;
+@use 'mixins';
+
+.screen {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  padding: 2rem 0;
+
+
+  .expand-video {
+    width: 220px;
+    height: auto;
+    transform-origin: right top;
+    object-fit: cover
+  }
+
+  &__inner {
+    display: flex;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 1rem;
+    position: relative;
+    width: 100%;
+  }
+
+  &__act {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12rem 0 4rem 0;
+
+    @media screen and (max-width: 668px) {
+      padding: 1rem 0 3rem 0;
+    }
+
+  }
+
+  &__icon {
+    color: white;
+    text-align: center;
+    padding-left: 33%;
+
+    img {
+      max-width: 3rem;
+      margin: 0 auto;
+    }
+
+    span {
+      display: inline-block;
+      font-size: .8rem;
+      text-transform: uppercase;
+      padding-top: .4rem;
+    }
+  }
+
+  &__title {
+    @include mix.fs(2rem, 4rem);
+  }
+}
+
+.paginations {
+  flex-grow: 2;
+
+  &__text {
+    max-width: 350px;
+
+    span {
+      color: $grey;
+    }
+  }
+}
+
+.banner {
+  padding: 10rem 0;
+
+  &__title {
+    @include mix.fs();
+    text-align: center;
+  }
+
+  p {
+    text-align: center;
+  }
+}
+
+.items {
+  &__inner {
+    display: flex;
+    align-items: stretch;
+    flex-wrap: nowrap;
+
+    gap: 0 1rem;
+
+    width: 100%;
+    height: auto !important;
+    margin: 0 auto;
+
+    @include mixins.respond-to(medium-screens) {
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+    }
+
+    @include mixins.respond-to(handhelds) {
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+  }
+
+  .item {
+    $icon-width: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+
+    background-color: $bg-card-color;
+    width: min(280px, 100%);
+    border-radius: .2rem;
+
+    transition: transform 0.8s ease-out;
+    will-change: transform, opacity;
+
+    @include mixins.respond-to(handhelds) {
+      width: 100%;
+    }
+
+    &:first-child {
+      transform: translateY(0) !important;
+    }
+
+    &__desc {
+      padding: 1.4rem;
+    }
+
+    &__image {
+      margin-top: auto;
+
+      img {
+        max-width: 100%;
+        width: 100%;
+      }
+    }
+
+    &__title {
+      position: relative;
+      padding-left: calc($icon-width + 8px);
+      color: black;
+
+      &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        background-color: #8178be;
+        width: 1rem;
+        height: 1rem;
+        border-radius: .2rem;
+      }
+    }
+
+    &__text {
+      color: $grey;
+
+      p:first-child {
+        margin-bottom: 1rem;
+      }
+
+    }
+  }
+}
+
+.partner {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+
+  padding: 15rem 0;
+  gap: 0 1rem;
+
+  h3 {
+    @include mix.fs(1.5rem, 3rem);
+  }
+
+  span {
+    @include mix.fs(1rem, 1.5rem);
+    max-width: 20rem;
+    color: $grey;
+  }
+}

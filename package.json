@@ -1,0 +1,21 @@
+{
+  "name": "involve",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "sass:watch": "sass --watch scss:css --style compressed",
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "sass": "^1.87.0",
+    "vite": "^6.3.4"
+  },
+  "dependencies": {
+    "gsap": "^3.13.0"
+  }
+}
