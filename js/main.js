@@ -2,7 +2,6 @@ import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
 
-
 function setupAnimations() {
   const cards = gsap.utils.toArray('.item');
   const container = document.querySelector('.items');
@@ -33,7 +32,6 @@ function setupAnimations() {
           end: endValue,
           pin: true,
           pinSpacing: false, // ← не создаёт лишней прокрутки
-          markers: true,
           scrub: false,
           revertOnUpdate: true, // ← Автоматически откатывает изменения при обновлении
         });
@@ -180,8 +178,6 @@ function setupAnimations() {
   })
 }
 
-// Первоначальная настройка
-// Инициализация после полной загрузки страницы
 window.addEventListener('DOMContentLoaded', function () {
   setupAnimations();
 });
