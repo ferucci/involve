@@ -2,22 +2,25 @@ import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
 
-const cards = gsap.utils.toArray('.item');
-const container = document.querySelector('.items');
-const video = document.querySelector('.expand-video');
-const bannerSection = document.querySelector('.banner');
-let videoAnimation, cardsAnimation;
 
 function setupAnimations() {
+  const cards = gsap.utils.toArray('.item');
+  const container = document.querySelector('.items');
+  const video = document.querySelector('.expand-video');
+  let videoAnimation, cardsAnimation;
+
+  if (!container || !video || !cards.length) {
+    console.error("Элементы не найдены!");
+    return;
+  }
+
   return ScrollTrigger.matchMedia({
 
     "(max-width: 667px)": () => {
-
       gsap.set(video, { x: 0, y: 0, scale: 1, opacity: 1 });
       gsap.set(cards, { y: 0, width: "100%", maxWidth: "100%", opacity: 1 });
 
       const cardHeight = cards[0].offsetHeight;
-      const cardsTotalHeight = container.offsetHeight;
 
       cards.forEach((card, index) => {
 
@@ -29,12 +32,12 @@ function setupAnimations() {
           start: 'top+=10 top',
           end: endValue,
           pin: true,
-          pinSpacing: false, // не создаёт лишней прокрутки
+          pinSpacing: false, // ← не создаёт лишней прокрутки
           markers: true,
           scrub: false,
-          // можно добавить onUpdate для доп. логики, если нужно
+          revertOnUpdate: true, // ← Автоматически откатывает изменения при обновлении
         });
-        // z-index: последняя карточка выше всех
+
         card.style.zIndex = index;
       });
       return;
@@ -109,7 +112,7 @@ function setupAnimations() {
       const offsetX = (screenWidth - initialWidth) / 2 - videoRect.left;
       const offsetY = (screenHeight - initialHeight) / 2 - videoRect.top;
 
-      ScrollTrigger.refresh(); // обновляю ScrollTrigger перед настройкой
+      ScrollTrigger.refresh(); // ← обновляю ScrollTrigger перед настройкой
 
       // Установка начальных параметров
       gsap.set(cards, {
@@ -130,6 +133,7 @@ function setupAnimations() {
           pin: true,
           fastScrollEnd: true,
           pinSpacing: true,
+          revertOnUpdate: true,
           immediateRender: false, // Важно: отключаем немедленный рендеринг
           onUpdate: self => {
             if (self.progress === 0 && self.direction === -1) {
@@ -180,9 +184,4 @@ function setupAnimations() {
 // Инициализация после полной загрузки страницы
 window.addEventListener('DOMContentLoaded', function () {
   setupAnimations();
-
-  // Дополнительное обновление после короткой задержки
-  setTimeout(() => {
-    ScrollTrigger.refresh();
-  }, 300);
 });
