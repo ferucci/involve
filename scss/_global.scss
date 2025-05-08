@@ -8,10 +8,18 @@ body {
   background: $bg-color;
   color: $text-color;
   overflow-x: hidden;
+  // position: relative;
 }
 
 .container {
-  max-width: 1200px;
+  max-width: 1600px;
   margin: 0 auto;
   padding: 2rem;
+  // overflow: hidden;
+}
+
+.video-element {
+  transform: translate3d(0, 0, 0) !important;
+  opacity: 1 !important;
+  scale: 1 !important;
 }

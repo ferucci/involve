@@ -10,6 +10,7 @@
 
 
 $small: 576px;
+$custom: 667px;
 $large: 1200px;
 
 @mixin respond-to($media) {
@@ -17,6 +18,12 @@ $large: 1200px;
   // карманные компьютеры
   @if $media ==handhelds {
     @media only screen and (max-width: $small) {
+      @content;
+    }
+  }
+
+  @if $media ==custom {
+    @media only screen and (max-width: $custom) {
       @content;
     }
   }
