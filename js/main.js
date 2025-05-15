@@ -32,7 +32,10 @@ function preloaderAnimation() {
     duration,
     ease: "power1.inOut",
     delay: baseDelay,
-    stagger: { each: stagger, from: "end" }
+    stagger: { each: stagger, from: "end" },
+    onStart: () => {
+      document.querySelector(".preloader").style.background = "transparent"
+    },
   });
 
   // Группа 2 — сверху вниз
@@ -199,7 +202,6 @@ function setupAnimations() {
 }
 window.addEventListener('load', () => {
   preloaderAnimation();
-  document.body.classList.remove("blok-scroll");
 })
 window.addEventListener('DOMContentLoaded', function () {
   setupAnimations();
