@@ -2,9 +2,83 @@ import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
 
+function preloaderAnimation() {
+  const overlay = document.querySelector(".overlay");
+  for (let i = 0; i < 80; i++) {
+    const block = document.createElement("div");
+    block.classList.add("preload-block");
+    block.style.top = `${(i % 20) * 5}%`;
+    block.style.left = `${Math.floor(i / 20) * 25}%`;
+    overlay.appendChild(block);
+  }
+
+  // Разбиваем на группы по 20
+  const blocks = document.querySelectorAll(".preload-block");
+
+  const group1 = Array.from(blocks).slice(0, 20);   // слева снизу вверх
+  const group2 = Array.from(blocks).slice(20, 40);  // слева сверху вниз
+  const group3 = Array.from(blocks).slice(40, 60);  // справа снизу вверх
+  const group4 = Array.from(blocks).slice(60, 80);  // справа сверху вниз
+
+  // Общие параметры
+  const baseDelay = 1;
+  const duration = 0.8;
+  const stagger = 0.03;
+
+  // Группа 1 — снизу вверх
+  group1.forEach(block => block.style.transformOrigin = "top");
+  gsap.to(group1, {
+    scaleY: 0,
+    duration,
+    ease: "power1.inOut",
+    delay: baseDelay,
+    stagger: { each: stagger, from: "end" }
+  });
+
+  // Группа 2 — сверху вниз
+  group2.forEach(block => block.style.transformOrigin = "bottom");
+  gsap.to(group2, {
+    scaleY: 0,
+    duration,
+    ease: "power1.inOut",
+    delay: baseDelay,
+    stagger: { each: stagger, from: "start" }
+  });
+
+  // Группа 3 — снизу вверх
+  group3.forEach(block => block.style.transformOrigin = "top");
+  gsap.to(group3, {
+    scaleY: 0,
+    duration,
+    ease: "power1.inOut",
+    delay: baseDelay,
+    stagger: { each: stagger, from: "end" }
+  });
+
+  // Группа 4 — сверху вниз
+  group4.forEach(block => block.style.transformOrigin = "bottom");
+  gsap.to(group4, {
+    scaleY: 0,
+    duration,
+    ease: "power1.inOut",
+    delay: baseDelay,
+    stagger: { each: stagger, from: "start" }
+  });
+
+  gsap.to(".overlay", {
+    opacity: 0,
+    delay: baseDelay + duration + 0.6, // немного позже окончания анимации
+    duration: 0.5,
+    onComplete: () => {
+      document.querySelector(".overlay").style.display = "none";
+      document.body.classList.remove("blok-scroll");
+    }
+  });
+}
+
 function setupAnimations() {
   const cards = gsap.utils.toArray('.item');
-  const container = document.querySelector('.items');
+  const container = document.querySelector('.items__inner');
   const video = document.querySelector('.expand-video');
   let videoAnimation, cardsAnimation;
 
@@ -21,80 +95,26 @@ function setupAnimations() {
 
       const cardHeight = cards[0].offsetHeight;
 
-      cards.forEach((card, index) => {
-
-        // Для последней карточки end будет 'top top', для остальных - +=cardHeight
-        const endValue = index === cards.length - 1 ? 'top top' : `+=${cardHeight}`;
-
-        ScrollTrigger.create({
-          trigger: card,
-          start: 'top+=10 top',
-          end: endValue,
+      const timeline = gsap.timeline({
+        scrollTrigger: {
+          trigger: container,
           pin: true,
-          pinSpacing: false, // ← не создаёт лишней прокрутки
-          scrub: false,
-          revertOnUpdate: true, // ← Автоматически откатывает изменения при обновлении
-        });
-
-        card.style.zIndex = index;
+          pinSpacing: true,
+          scrub: 1,
+          start: "top top",
+          end: "bottom bottom"
+        }
       });
-      return;
 
-      // if (window.innerWidth <= 668) {
-      //   gsap.set(video, { x: 0, y: 0, scale: 1, opacity: 1 });
-
-      //   const cardHeight = cards[0].offsetHeight;
-      //   const cardsTotalHeight = cards.reduce((acc, card) => acc + card.offsetHeight, 0);
-      //   // Сохраняем изначальные позиции
-      //   const originalPositions = cards.map((card, index) => ({
-      //     y: index * 60,
-      //   }));
-
-      //   // Инициализируем позиционирование
-      //   cards.forEach((card, index) => {
-      //     gsap.set(card, {
-      //       position: 'absolute',
-      //       top: 0,
-      //       y: originalPositions[index].y,
-      //       zIndex: index,
-      //       // opacity: index === 0 ? 1 : 0.3 // Первая карточка полностью видима
-      //     });
-      //   });
-
-      //   ScrollTrigger.create({
-      //     trigger: '.items__inner',
-      //     start: 'top top',
-      //     end: `+=${cardsTotalHeight}`,
-      //     pin: true,
-      //     markers: true,
-      //     scrub: 1,
-
-      //     onUpdate: (self) => {
-      //       const progress = self.progress;
-      //       const activeIndex = Math.floor(progress * cards.length);
-
-      //       cards.forEach((card, index) => {
-      //         if (index <= activeIndex) {
-      //           // Карточки выше активной возвращаются на место
-      //           const returnProgress = Math.min(1, (progress - (index / cards.length)) * cards.length);
-      //           gsap.to(card, {
-      //             y: originalPositions[index].y * (1 - returnProgress),
-      //             opacity: 1 - 0.5 * returnProgress,
-      //             duration: 0.3
-      //           });
-      //         } else {
-      //           // Обычное поведение для следующих карточек
-      //           gsap.to(card, {
-      //             y: (index - activeIndex) * 60,
-      //             // opacity: 0,
-      //             duration: 0.3
-      //           });
-      //         }
-      //       });
-      //     }
-      //   });
-      //   return
-      // }
+      timeline.from(".item", {
+        y: (index) => (-cardHeight + 40) * index + 1,
+        duration: (index) => 0.8 / (index + 1),
+        ease: "none",
+        stagger: {
+          each: 0.2,
+          from: "end"
+        },
+      });
     },
 
     "(min-width: 668px)": () => {
@@ -177,7 +197,10 @@ function setupAnimations() {
 
   })
 }
-
+window.addEventListener('load', () => {
+  // preloaderAnimation();
+  document.body.classList.remove("blok-scroll");
+})
 window.addEventListener('DOMContentLoaded', function () {
   setupAnimations();
 });

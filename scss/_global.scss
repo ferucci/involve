@@ -15,11 +15,37 @@ body {
   max-width: 1600px;
   margin: 0 auto;
   padding: 2rem;
-  // overflow: hidden;
+  overflow: hidden;
 }
 
 .video-element {
   transform: translate3d(0, 0, 0) !important;
   opacity: 1 !important;
   scale: 1 !important;
+}
+
+.blok-scroll {
+  overflow: hidden;
+  // width: calc(100vw - 17px);
+  height: 100vh;
+}
+
+.preloader {
+  position: absolute;
+  z-index: 88;
+}
+
+.preload-block {
+  position: fixed;
+  width: 25%;
+  height: 5%;
+  background: $accent-color;
+  z-index: 99;
+  transform-origin: top;
+}
+
+@media screen and (max-width: 648px) {
+  .blok-scroll {
+    width: 100vw;
+  }
 }

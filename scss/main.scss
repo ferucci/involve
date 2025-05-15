@@ -71,19 +71,29 @@
 }
 
 .paginations {
+  position: relative;
   flex-grow: 2;
+  z-index: 1000;
 
   &__text {
     max-width: 350px;
+    position: relative;
+    z-index: 9999;
 
     span {
       color: $grey;
+      position: relative;
+      z-index: 9999;
     }
   }
 }
 
 .banner {
   padding: 10rem 0;
+
+  @include mixins.respond-to(handhelds) {
+    padding: 4rem 0
+  }
 
   &__title {
     @include mix.fs();
@@ -136,6 +146,10 @@
 
     transition: transform 0.8s ease-out;
     will-change: transform, opacity;
+
+    @include mixins.respond-to(custom) {
+      flex: 1 1 100%;
+    }
 
     @include mixins.respond-to(handhelds) {
       position: relative;
