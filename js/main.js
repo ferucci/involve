@@ -198,7 +198,7 @@ function setupAnimations() {
   })
 }
 window.addEventListener('load', () => {
-  // preloaderAnimation();
+  preloaderAnimation();
   document.body.classList.remove("blok-scroll");
 })
 window.addEventListener('DOMContentLoaded', function () {
