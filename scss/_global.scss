@@ -9,6 +9,12 @@ body {
   background: $bg-color;
   color: $text-color;
   overflow-x: hidden;
+  will-change: overflow;
+
+  // @include mixins.respond-to(wide-screens) {
+  //   width: calc(100vw + 17px);
+  // }
+
   // position: relative;
 }
 
@@ -31,7 +37,7 @@ body {
 
 .blok-scroll {
   overflow: hidden;
-  // width: calc(100vw - 17px);
+  width: calc(100vw - 17px);
   height: 100vh;
 }
 

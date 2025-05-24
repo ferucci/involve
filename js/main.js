@@ -2,8 +2,25 @@ import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
 
+
+
 function preloaderAnimation() {
   const overlay = document.querySelector(".overlay");
+
+  // Создаём контейнер для счётчика прогресса
+  const progressCounter = document.createElement("div");
+  progressCounter.style.position = "fixed";
+  progressCounter.style.bottom = "50px";
+  progressCounter.style.right = "50px";
+  progressCounter.style.transform = "translateX(-50%)";
+  progressCounter.style.color = "black";
+  progressCounter.style.fontSize = "24px";
+  progressCounter.style.fontFamily = "sans-serif";
+  progressCounter.style.zIndex = "1000";
+  progressCounter.textContent = "0";
+  document.body.appendChild(progressCounter);
+
+  // Создаём блоки прелоадера
   for (let i = 0; i < 80; i++) {
     const block = document.createElement("div");
     block.classList.add("preload-block");
@@ -12,71 +29,83 @@ function preloaderAnimation() {
     overlay.appendChild(block);
   }
 
-  // Разбиваем на группы по 20
   const blocks = document.querySelectorAll(".preload-block");
+  const group1 = Array.from(blocks).slice(0, 20);
+  const group2 = Array.from(blocks).slice(20, 40);
+  const group3 = Array.from(blocks).slice(40, 60);
+  const group4 = Array.from(blocks).slice(60, 80);
 
-  const group1 = Array.from(blocks).slice(0, 20);   // слева снизу вверх
-  const group2 = Array.from(blocks).slice(20, 40);  // слева сверху вниз
-  const group3 = Array.from(blocks).slice(40, 60);  // справа снизу вверх
-  const group4 = Array.from(blocks).slice(60, 80);  // справа сверху вниз
-
-  // Общие параметры
-  const baseDelay = 1;
-  const duration = 0.8;
-  const stagger = 0.03;
-
-  // Группа 1 — снизу вверх
-  group1.forEach(block => block.style.transformOrigin = "top");
-  gsap.to(group1, {
-    scaleY: 0,
-    duration,
-    ease: "power1.inOut",
-    delay: baseDelay,
-    stagger: { each: stagger, from: "end" },
-    onStart: () => {
-      document.querySelector(".preloader").style.background = "transparent"
+  const blocksTL = gsap.timeline();
+  // имитация загрузки
+  const loadingTL = gsap.timeline({
+    onUpdate: () => {
+      const progress = Math.round(loadingTL.progress() * 100);
+      progressCounter.textContent = `${progress}`;
     },
-  });
-
-  // Группа 2 — сверху вниз
-  group2.forEach(block => block.style.transformOrigin = "bottom");
-  gsap.to(group2, {
-    scaleY: 0,
-    duration,
-    ease: "power1.inOut",
-    delay: baseDelay,
-    stagger: { each: stagger, from: "start" }
-  });
-
-  // Группа 3 — снизу вверх
-  group3.forEach(block => block.style.transformOrigin = "top");
-  gsap.to(group3, {
-    scaleY: 0,
-    duration,
-    ease: "power1.inOut",
-    delay: baseDelay,
-    stagger: { each: stagger, from: "end" }
-  });
-
-  // Группа 4 — сверху вниз
-  group4.forEach(block => block.style.transformOrigin = "bottom");
-  gsap.to(group4, {
-    scaleY: 0,
-    duration,
-    ease: "power1.inOut",
-    delay: baseDelay,
-    stagger: { each: stagger, from: "start" }
-  });
-
-  gsap.to(".overlay", {
-    opacity: 0,
-    delay: baseDelay + duration + 0.6, // немного позже окончания анимации
-    duration: 0.5,
     onComplete: () => {
-      document.querySelector(".overlay").style.display = "none";
-      document.body.classList.remove("blok-scroll");
+      // 2. После завершения счётчика - показываем блоки
+      progressCounter.remove();
+      gsap.set(blocks, { opacity: 1 });
+      startBlocksAnimation();
+      setupAnimations();
     }
   });
+
+  // Имитация загрузки (3 секунды)
+  loadingTL.to({}, {
+    duration: 2,
+    ease: "none"
+  });
+
+  function startBlocksAnimation() {
+
+    const baseDelay = 0;
+    const duration = 0.8;
+    const stagger = 0.03;
+
+    group1.forEach(block => block.style.transformOrigin = "top");
+    group2.forEach(block => block.style.transformOrigin = "bottom");
+    group3.forEach(block => block.style.transformOrigin = "top");
+    group4.forEach(block => block.style.transformOrigin = "bottom");
+    return blocksTL
+      .to(group1, {
+        scaleY: 0,
+        duration,
+        ease: "power1.inOut",
+        delay: baseDelay,
+        stagger: { each: stagger, from: "end" },
+        onStart: () => {
+          document.querySelector(".preloader").style.background = "transparent";
+        },
+      })
+      .to(group2, {
+        scaleY: 0,
+        duration,
+        ease: "power1.inOut",
+        stagger: { each: stagger, from: "start" },
+      }, "<")
+      .to(group3, {
+        scaleY: 0,
+        duration,
+        ease: "power1.inOut",
+        stagger: { each: stagger, from: "end" },
+      }, "<")
+      .to(group4, {
+        scaleY: 0,
+        duration,
+        ease: "power1.inOut",
+        stagger: { each: stagger, from: "start" },
+      }, "<")
+      .to(".overlay", {
+        opacity: 0,
+        duration: 0.5,
+        onComplete: () => {
+          document.querySelector(".overlay").style.display = "none";
+          document.body.classList.remove("blok-scroll");
+        }
+      });
+
+  }
 }
 
 function setupAnimations() {
@@ -94,28 +123,33 @@ function setupAnimations() {
 
     "(max-width: 667px)": () => {
       gsap.set(video, { x: 0, y: 0, scale: 1, opacity: 1 });
-      gsap.set(cards, { y: 0, width: "100%", maxWidth: "100%", opacity: 1 });
+      gsap.set(cards, { y: 0, opacity: 1 });
 
       const cardHeight = cards[0].offsetHeight;
+      const cardsGap = 40;
+      const totalCardsHeight = (cards.length * cardHeight) + ((cards.length - 1) * cardsGap);
+
+      // конечная точка анимации
+      const animationEndPoint = totalCardsHeight - window.innerHeight + cardHeight;
 
       const timeline = gsap.timeline({
         scrollTrigger: {
           trigger: container,
           pin: true,
-          pinSpacing: true,
-          scrub: 1,
+          pinSpacing: false,
+          scrub: .8,
           start: "top top",
-          end: "bottom bottom"
+          end: `+=${animationEndPoint}`
         }
       });
 
-      timeline.from(".item", {
-        y: (index) => (-cardHeight + 40) * index + 1,
+      timeline.to(".item", {
+        y: (index) => (-cardHeight + cardsGap) * index + 1,
         duration: (index) => 0.8 / (index + 1),
-        ease: "none",
+        ease: "power1.out",
         stagger: {
-          each: 0.2,
-          from: "end"
+          each: 0.15,
+          onStart: () => console.log("Элемент начал анимацию")
         },
       });
     },
@@ -133,13 +167,11 @@ function setupAnimations() {
       const offsetX = (screenWidth - initialWidth) / 2 - videoRect.left;
       const offsetY = (screenHeight - initialHeight) / 2 - videoRect.top;
 
-      ScrollTrigger.refresh(); // ← обновляю ScrollTrigger перед настройкой
-
       // Установка начальных параметров
       gsap.set(cards, {
         y: (i) => i * 75,
         opacity: (i) => i === 0 ? 1 : 0.3,
-        transform: "translate3d(0, 0, 0)"
+        transform: "translate3d(0, 0, 0)",
       });
 
       // Анимация видео
@@ -178,7 +210,7 @@ function setupAnimations() {
       cardsAnimation = gsap.timeline({
         scrollTrigger: {
           trigger: cards[0],
-          start: "bottom bottom",
+          start: "bottom bottom-=25",
           end: "+=700",
           scrub: true,
           pin: container,
@@ -194,15 +226,12 @@ function setupAnimations() {
         immediateRender: false
       });
 
-      // Принудительно обновляем ScrollTrigger после создания анимаций
-      ScrollTrigger.refresh();
+      // // Принудительно обновляем ScrollTrigger после создания анимаций
+      // ScrollTrigger.refresh();
     }
 
   })
 }
-window.addEventListener('load', () => {
+window.addEventListener('DOMContentLoaded', () => {
   preloaderAnimation();
 })
-window.addEventListener('DOMContentLoaded', function () {
-  setupAnimations();
-});
