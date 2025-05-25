@@ -6,7 +6,10 @@ gsap.registerPlugin(ScrollTrigger);
 
 function preloaderAnimation() {
   const overlay = document.querySelector(".overlay");
-
+  if (!overlay) {
+    console.error("Элемент .overlay не найден!");
+    return;
+  }
   // Создаём контейнер для счётчика прогресса
   const progressCounter = document.createElement("div");
   progressCounter.style.position = "fixed";
@@ -20,14 +23,15 @@ function preloaderAnimation() {
   progressCounter.textContent = "0";
   document.body.appendChild(progressCounter);
 
-  // Создаём блоки прелоадера
+  const fragment = document.createDocumentFragment();
   for (let i = 0; i < 80; i++) {
     const block = document.createElement("div");
     block.classList.add("preload-block");
     block.style.top = `${(i % 20) * 5}%`;
     block.style.left = `${Math.floor(i / 20) * 25}%`;
-    overlay.appendChild(block);
+    fragment.appendChild(block);
   }
+  overlay.appendChild(fragment); // Добавляем все блоки за один раз
 
   const blocks = document.querySelectorAll(".preload-block");
   const group1 = Array.from(blocks).slice(0, 20);
@@ -43,15 +47,17 @@ function preloaderAnimation() {
       progressCounter.textContent = `${progress}`;
     },
     onComplete: () => {
+      if (progressCounter && progressCounter.parentNode) {
+        progressCounter.parentNode.removeChild(progressCounter);
+      }
       // 2. После завершения счётчика - показываем блоки
-      progressCounter.remove();
       gsap.set(blocks, { opacity: 1 });
       startBlocksAnimation();
       setupAnimations();
     }
   });
 
-  // Имитация загрузки (3 секунды)
+  // Имитация загрузки (2 секунды)
   loadingTL.to({}, {
     duration: 2,
     ease: "none"
@@ -109,39 +115,6 @@ function preloaderAnimation() {
   }
 }
 
-function setupScrollIconAnimation() {
-  const scrollIcon = document.querySelector('.screen__icon');
-  if (!scrollIcon) return;
-
-  // доступное пространство для движения вправо
-  const iconRect = scrollIcon.getBoundingClientRect();
-  const moveRightDistance = window.innerWidth - iconRect.right - 200; // -200 для отступа от края
-
-  // Количество пикселей для движения вниз
-  const moveDownDistance = window.innerHeight / 2;
-
-  const tl = gsap.timeline({
-    scrollTrigger: {
-      trigger: ".screen",
-      start: "top-=80 top",
-      end: "+=500",
-      scrub: .5,
-      pin: true,
-    }
-  });
-
-  // Анимация движения
-  tl
-    .to(scrollIcon, {
-      x: moveRightDistance,
-      duration: 0.5
-    })
-    .to(scrollIcon, {
-      y: moveDownDistance,
-      duration: 0.5
-    }, ">"); // ">" означает после завершения предыдущей анимации
-}
-
 function setupAnimations() {
   const cards = gsap.utils.toArray('.item');
   const container = document.querySelector('.items');
@@ -161,6 +134,8 @@ function setupAnimations() {
       gsap.set(video, { x: 0, y: 0, scale: 1, opacity: 1 });
       gsap.set(cards, { y: 0, opacity: 1 });
 
+      const itemsInner = container.querySelector('.items__inner');
+
       const cardHeight = cards[0].offsetHeight;
       const cardsGap = 40;
       const totalCardsHeight = (cards.length * cardHeight) + ((cards.length - 1) * cardsGap);
@@ -170,7 +145,7 @@ function setupAnimations() {
 
       const timeline = gsap.timeline({
         scrollTrigger: {
-          trigger: container,
+          trigger: itemsInner,
           pin: true,
           pinSpacing: false,
           scrub: .8,
@@ -202,6 +177,37 @@ function setupAnimations() {
       const finalScale = Math.max(scaleX, scaleY);
       const offsetX = (screenWidth - initialWidth) / 2 - videoRect.left;
       const offsetY = (screenHeight - initialHeight) / 2 - videoRect.top;
+
+      const scrollIcon = document.querySelector('.screen__icon');
+      if (!scrollIcon) return;
+
+      // доступное пространство для движения вправо
+      const iconRect = scrollIcon.getBoundingClientRect();
+      const moveRightDistance = window.innerWidth - iconRect.right - 80; // -80 для отступа от края
+
+      // Количество пикселей для движения вниз
+      const moveDownDistance = window.innerHeight / 2;
+
+      const iconTL = gsap.timeline({
+        scrollTrigger: {
+          trigger: ".screen",
+          start: "top-=80 top",
+          end: "+=500",
+          scrub: .5,
+          pin: true,
+        }
+      });
+
+      // Анимация движения
+      iconTL
+        .to(scrollIcon, {
+          x: moveRightDistance,
+          duration: 0.5
+        })
+        .to(scrollIcon, {
+          y: moveDownDistance,
+          duration: 0.5
+        }, ">"); // ">" означает после завершения предыдущей анимации
 
       // Установка начальных параметров
       gsap.set(cards, {
@@ -282,5 +288,4 @@ function setupAnimations() {
 
 window.addEventListener('DOMContentLoaded', () => {
   preloaderAnimation();
-  setupScrollIconAnimation();
 })
