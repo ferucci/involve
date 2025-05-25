@@ -11,9 +11,10 @@ body {
   overflow-x: hidden;
   will-change: overflow;
 
-  // @include mixins.respond-to(wide-screens) {
-  //   width: calc(100vw + 17px);
-  // }
+
+  @include mixins.respond-to(wide-screens) {
+    width: calc(100vw - 17px);
+  }
 
   // position: relative;
 }

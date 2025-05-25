@@ -47,7 +47,7 @@
   }
 
   &__icon {
-    color: white;
+    color: inherit;
     text-align: center;
     padding-left: 33%;
 
@@ -62,6 +62,10 @@
       text-transform: uppercase;
       padding-top: .4rem;
     }
+  }
+
+  &__title-wrapper {
+    overflow: hidden
   }
 
   &__title {
@@ -216,7 +220,7 @@
   gap: 0 1rem;
 
   @include mixins.respond-to(handhelds) {
-    padding: 22rem 0 0
+    padding: 44rem 0 0
   }
 
   h3 {

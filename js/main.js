@@ -14,8 +14,8 @@ function preloaderAnimation() {
   progressCounter.style.right = "50px";
   progressCounter.style.transform = "translateX(-50%)";
   progressCounter.style.color = "black";
-  progressCounter.style.fontSize = "24px";
-  progressCounter.style.fontFamily = "sans-serif";
+  progressCounter.style.fontSize = "clamp(32px, 5vw, 72px)";
+  progressCounter.style.fontFamily = "inherit";
   progressCounter.style.zIndex = "1000";
   progressCounter.textContent = "0";
   document.body.appendChild(progressCounter);
@@ -75,7 +75,9 @@ function preloaderAnimation() {
         delay: baseDelay,
         stagger: { each: stagger, from: "end" },
         onStart: () => {
-          document.querySelector(".preloader").style.background = "transparent";
+          const preloader = document.querySelector(".preloader");
+          preloader.style.background = "transparent";
+          preloader.style.zIndex = "-1";
         },
       })
       .to(group2, {
@@ -112,7 +114,9 @@ function setupAnimations() {
   const cards = gsap.utils.toArray('.item');
   const container = document.querySelector('.items__inner');
   const video = document.querySelector('.expand-video');
-  let videoAnimation, cardsAnimation;
+  const heroTitle = document.querySelector('.screen__title');
+
+  let videoAnimation, cardsAnimation, heroTitleAnimation;
 
   if (!container || !video || !cards.length) {
     console.error("Элементы не найдены!");
@@ -199,12 +203,22 @@ function setupAnimations() {
         x: offsetX,
         y: offsetY,
         scale: finalScale,
-        opacity: 0.1,
+        opacity: 0.5,
         ease: "power2.out",
         transformOrigin: "center center",
         onStart: () => video.style.zIndex = -1,
         immediateRender: false // Важно: отключаем немедленный рендеринг для анимации
       });
+
+      heroTitleAnimation = gsap.timeline({
+        scrollTrigger: {
+          trigger: heroTitle,
+          start: "top-=0 top+=35%",
+          scrub: true,
+        }
+      }).to(heroTitle, {
+        y: -250
+      })
 
       // Анимация карточек
       cardsAnimation = gsap.timeline({
@@ -214,8 +228,8 @@ function setupAnimations() {
           end: "+=700",
           scrub: true,
           pin: container,
-          // pinSpacing: false,
-          anticipatePin: 1,
+          pinSpacing: true,
+          anticipatePin: 0.4,
           immediateRender: false
         }
       }).to(cards, {
@@ -232,6 +246,7 @@ function setupAnimations() {
 
   })
 }
+
 window.addEventListener('DOMContentLoaded', () => {
   preloaderAnimation();
 })
