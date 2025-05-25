@@ -10,12 +10,27 @@
 //   height: auto !important;
 // }
 
-.screen {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
+header {
   padding: 2rem 0;
   position: relative;
+  z-index: 2;
+
+  &.fixed {
+    position: fixed;
+  }
+}
+
+
+.screen {
+  // padding: 2rem 0;
+  position: relative;
+  min-height: 100vh;
+
+  &__wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+  }
 
   .expand-video {
     width: 220px;
@@ -49,7 +64,6 @@
   &__icon {
     color: inherit;
     text-align: center;
-    padding-left: 33%;
 
     img {
       max-width: 3rem;
@@ -77,23 +91,23 @@
 .paginations {
   position: relative;
   flex-grow: 2;
-  z-index: 1000;
+  z-index: 9 !important;
 
   &__text {
     max-width: 350px;
-    position: relative;
-    z-index: 9999;
 
     span {
       color: $grey;
-      position: relative;
-      z-index: 9999;
     }
   }
 }
 
 .banner {
-  padding: 10rem 0;
+  padding: 3rem 0 10rem 0;
+
+  @include mixins.respond-to(cont-w) {
+    padding: 10rem 0;
+  }
 
   @include mixins.respond-to(handhelds) {
     padding: 4rem 0

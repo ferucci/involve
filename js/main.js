@@ -77,7 +77,6 @@ function preloaderAnimation() {
         onStart: () => {
           const preloader = document.querySelector(".preloader");
           preloader.style.background = "transparent";
-          preloader.style.zIndex = "-1";
         },
       })
       .to(group2, {
@@ -110,9 +109,42 @@ function preloaderAnimation() {
   }
 }
 
+function setupScrollIconAnimation() {
+  const scrollIcon = document.querySelector('.screen__icon');
+  if (!scrollIcon) return;
+
+  // доступное пространство для движения вправо
+  const iconRect = scrollIcon.getBoundingClientRect();
+  const moveRightDistance = window.innerWidth - iconRect.right - 200; // -200 для отступа от края
+
+  // Количество пикселей для движения вниз
+  const moveDownDistance = window.innerHeight / 2;
+
+  const tl = gsap.timeline({
+    scrollTrigger: {
+      trigger: ".screen",
+      start: "top-=80 top",
+      end: "+=500",
+      scrub: .5,
+      pin: true,
+    }
+  });
+
+  // Анимация движения
+  tl
+    .to(scrollIcon, {
+      x: moveRightDistance,
+      duration: 0.5
+    })
+    .to(scrollIcon, {
+      y: moveDownDistance,
+      duration: 0.5
+    }, ">"); // ">" означает после завершения предыдущей анимации
+}
+
 function setupAnimations() {
   const cards = gsap.utils.toArray('.item');
-  const container = document.querySelector('.items__inner');
+  const container = document.querySelector('.items');
   const video = document.querySelector('.expand-video');
   const heroTitle = document.querySelector('.screen__title');
 
@@ -182,15 +214,16 @@ function setupAnimations() {
       videoAnimation = gsap.timeline({
         scrollTrigger: {
           toggleClass: { targets: '.screen', className: "active" },
+          // toggleClass: { targets: '.header', className: "fixed" },
           id: 'video',
           trigger: ".screen",
-          start: "top+=1 top",
+          start: "top-=79.5 top",
           end: "bottom+=1000 top",
           scrub: true,
           pin: true,
           fastScrollEnd: true,
           pinSpacing: true,
-          revertOnUpdate: true,
+          // revertOnUpdate: true,
           immediateRender: false, // Важно: отключаем немедленный рендеринг
           onUpdate: self => {
             if (self.progress === 0 && self.direction === -1) {
@@ -203,7 +236,7 @@ function setupAnimations() {
         x: offsetX,
         y: offsetY,
         scale: finalScale,
-        opacity: 0.5,
+        // opacity: 0.5,
         ease: "power2.out",
         transformOrigin: "center center",
         onStart: () => video.style.zIndex = -1,
@@ -249,4 +282,5 @@ function setupAnimations() {
 
 window.addEventListener('DOMContentLoaded', () => {
   preloaderAnimation();
+  setupScrollIconAnimation();
 })

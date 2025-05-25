@@ -12,6 +12,7 @@
 $small: 576px;
 $custom: 667px;
 $large: 1200px;
+$container: 1600px;
 
 @mixin respond-to($media) {
 
@@ -40,4 +41,11 @@ $large: 1200px;
       @content;
     }
   }
+
+  @else if $media ==cont-w {
+    @media only screen and (min-width: $container) {
+      @content;
+    }
+  }
+
 }

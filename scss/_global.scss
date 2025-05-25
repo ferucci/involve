@@ -22,7 +22,7 @@ body {
 .container {
   max-width: 1600px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 0 2rem;
 
   @include mixins.respond-to(medium-screens) {
     overflow: hidden;
@@ -54,7 +54,7 @@ body {
   width: 25%;
   height: 5%;
   background: $accent-color;
-  z-index: 99;
+  z-index: 3;
   transform-origin: top;
 }
 
