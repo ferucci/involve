@@ -10,6 +10,7 @@ body {
   color: $text-color;
   overflow-x: hidden;
   will-change: overflow;
+  position: relative;
 
 
   @include mixins.respond-to(wide-screens) {

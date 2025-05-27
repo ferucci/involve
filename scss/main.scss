@@ -14,22 +14,15 @@ header {
   padding: 2rem 0;
   position: relative;
   z-index: 2;
-
-  &.fixed {
-    position: fixed;
-  }
 }
 
 
 .screen {
-  // padding: 2rem 0;
-  position: relative;
   min-height: 100vh;
 
   &__wrapper {
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
   }
 
   .expand-video {
@@ -40,30 +33,29 @@ header {
     object-fit: cover
   }
 
-  &__inner {
+  &__top {
     display: flex;
     align-items: flex-end;
     flex-wrap: wrap;
     gap: 1rem;
-    position: relative;
     width: 100%;
   }
 
-  &__act {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 12rem 0 4rem 0;
+  // &__act {
+  //   display: flex;
+  //   flex-direction: column;
+  //   align-items: center;
+  //   padding: 12rem 0 4rem 0;
 
-    @media screen and (max-width: 668px) {
-      padding: 1rem 0 3rem 0;
-    }
-
-  }
+  //   @media screen and (max-width: 668px) {
+  //     padding: 1rem 0 3rem 0;
+  //   }
+  // }
 
   &__icon {
     color: inherit;
     text-align: center;
+    margin: 0 auto;
 
     img {
       max-width: 3rem;
@@ -79,6 +71,7 @@ header {
   }
 
   &__title-wrapper {
+    margin-top: 30%;
     overflow: hidden
   }
 
@@ -106,7 +99,7 @@ header {
   padding: 3rem 0 10rem 0;
 
   @include mixins.respond-to(cont-w) {
-    padding: 10rem 0;
+    padding: 18rem 0 10rem 0;
   }
 
   @include mixins.respond-to(handhelds) {
@@ -130,7 +123,6 @@ header {
     flex-wrap: nowrap;
     gap: 0 1rem;
     width: 100%;
-    // height: auto !important;
     margin: 0 auto;
     position: relative;
 
@@ -141,7 +133,6 @@ header {
     }
 
     @include mixins.respond-to(handhelds) {
-      position: relative;
       flex-wrap: wrap;
       gap: 1rem;
     }
