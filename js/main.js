@@ -7,54 +7,53 @@ let followAnimation; // Переменная для хранения ссылк�
 let mouseMoveHandler; // Переменная для хранения обработчика mousemove
 const followElement = document.querySelector('.screen__icon');
 
+const positionFollowElement = {
+  x: window.innerWidth / 2,
+  y: window.innerHeight / 3
+}
+
 const startFollowIcon = () => {
+  if (!followElement) return;
 
-  // Начальная позиция: 300px сверху и 50% от правого края
-  const initialX = window.innerWidth * 0.5; // 50% от ширины экрана (от правого края)
-  const initialY = window.innerWidth * 0.15;
-
-  if (!followElement || window.innerWidth < 668) {
+  if (window.innerWidth < 668 || 'ontouchstart' in window) {
     gsap.set(followElement, {
-      position: 'absolute',
-      x: initialX,
-      xPercent: -50,
-      y: 20,
-      zIndex: 9999,
-      pointerEvents: 'none'
+      x: positionFollowElement.x,
+      y: positionFollowElement.y
     });
-    return
+    return;
   };
 
-  gsap.set(followElement, {
-    position: 'fixed',
-    x: initialX,
-    y: initialY,
-    zIndex: 9999,
-    pointerEvents: 'none'
+  // Начальная позиция
+  let mouseX = positionFollowElement.x;
+  let mouseY = positionFollowElement.y;
+  let x = mouseX;
+  let y = mouseY;
+
+  // Плавное перемещение к курсору сразу при старте
+  gsap.to({ x: mouseX, y: mouseY }, {
+    duration: 0.5,
+    onUpdate: () => {
+      gsap.set(followElement, { x: x, y: y });
+    }
   });
 
-  if ('ontouchstart' in window) {
-    return;
-  }
-
-  let mouseX = initialX;
-  let mouseY = initialY;
-  let x = initialX;
-  let y = initialY;
-
-  // Сохраняем обработчик в переменную для последующего удаления
-  mouseMoveHandler = (e) => {
+  const mouseMoveHandler = (e) => {
     mouseX = e.clientX;
     mouseY = e.clientY;
   };
 
   window.addEventListener('mousemove', mouseMoveHandler);
 
-  // Создаем и сохраняем анимацию
+  // Анимация с динамической скоростью
   followAnimation = gsap.ticker.add(() => {
-    const speed = 0.3;
-    x += (mouseX - x) * speed;
-    y += (mouseY - y) * speed;
+    const dx = mouseX - x;
+    const dy = mouseY - y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    const dynamicSpeed = Math.min(0.5, distance * 0.3);
+
+    x += dx * dynamicSpeed;
+    y += dy * dynamicSpeed;
+
     gsap.set(followElement, { x: x, y: y });
   });
 };
@@ -85,7 +84,7 @@ function start() {
     progressCounter.style.color = "black";
     progressCounter.style.fontSize = "clamp(32px, 5vw, 72px)";
     progressCounter.style.fontFamily = "inherit";
-    progressCounter.style.zIndex = "1000";
+    progressCounter.style.zIndex = "8";
     progressCounter.textContent = "0";
   }
 
@@ -101,7 +100,7 @@ function start() {
     block.style.left = `${Math.floor(i / 20) * 25}%`;
     fragment.appendChild(block);
   }
-  overlay.appendChild(fragment); // Добавляем все блоки за один раз
+  overlay.appendChild(fragment); // Добавляем все блоки
 
   const blocks = document.querySelectorAll(".preload-block");
   const group1 = Array.from(blocks).slice(0, 20);
@@ -247,9 +246,7 @@ function innerAnimations() {
 
       const scaleX = screenWidth / initialWidth;
       const scaleY = screenHeight / initialHeight;
-      console.log('screenHeight', screenHeight)
-      console.log('initialHeight', initialHeight)
-      console.log(scaleY)
+
       const finalScale = Math.max(scaleX, scaleY);
       const offsetX = (screenWidth - initialWidth) / 2 - videoRect.left;
       const offsetY = (screenHeight - initialHeight) / 2 - videoRect.top;
@@ -290,7 +287,7 @@ function innerAnimations() {
         // opacity: 0.5,
         ease: "power2.out",
         transformOrigin: "center center",
-        onStart: () => video.style.zIndex = -1,
+        onStart: () => video.style.zIndex = 10,
         onComplete: () => {
           stopFollowIcon()
         },
@@ -300,12 +297,12 @@ function innerAnimations() {
 
       heroTitleAnimation = gsap.timeline({
         scrollTrigger: {
-          trigger: heroTitle,
+          trigger: '.screen',
           start: "top-=0 top+=10%",
           scrub: true,
         }
       }).to(heroTitle, {
-        y: -250
+        y: -380
       })
 
       // Анимация карточек

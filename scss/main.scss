@@ -13,16 +13,19 @@
 header {
   padding: 2rem 0;
   position: relative;
-  z-index: 2;
+  z-index: 3;
 }
 
 
 .screen {
   min-height: 100vh;
+  position: relative;
+  // z-index: 9;
 
   &__wrapper {
     display: flex;
     flex-direction: column;
+    height: calc(100vh - 80px);
   }
 
   .expand-video {
@@ -53,9 +56,16 @@ header {
   // }
 
   &__icon {
+    position: fixed;
     color: inherit;
     text-align: center;
-    margin: 0 auto;
+    top: 50px;
+    left: 100px;
+    z-index: 1;
+
+    @include mixins.respond-to(custom) {
+      position: absolute;
+    }
 
     img {
       max-width: 3rem;
@@ -71,13 +81,15 @@ header {
   }
 
   &__title-wrapper {
-    margin-top: 30%;
-    overflow: hidden
+    margin-top: auto;
+    overflow: hidden;
+    margin-bottom: 15vh;
   }
 
   &__title {
     @include mix.fs(2rem, 4rem);
     max-width: 80%;
+    padding-top: 2rem;
   }
 }
 

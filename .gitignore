@@ -1,6 +1,7 @@
 node_modules
 
 наброски.txt
+video/test-video.mp4
+
 js/apperanceCards.js
 js/scaleVideoWhenScroll.js
-video/test-video.mp4
